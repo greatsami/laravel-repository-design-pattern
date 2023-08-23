@@ -25,6 +25,8 @@ cp .env.example .env
 php artisan key:generate
 
 php artisan migrate --seed
+
+php artisan serve
 ```
 
 Now, you are ready to use api and test it and learn from this project.
