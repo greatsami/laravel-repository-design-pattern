@@ -2,7 +2,9 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Str;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +28,39 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        if (!$request->user() || !$request->user()->currentAccessToken()) {
+            throw new AuthenticationException;
+        }
+
+        $routeAbilities = $request->route()->middleware();
+
+        $abilities = array();
+        $abilityCaughtLine = "";
+        $abilitiesCaughtLine = "";
+        foreach ($routeAbilities as $routeAbility) {
+            if (Str::contains($routeAbility, 'ability:')) {
+                $abilityCaughtLine .= str_replace('ability:', '', $routeAbility);
+            }
+            if (Str::contains($routeAbility, 'abilities:')) {
+                $abilitiesCaughtLine .= str_replace('abilities:', '', $routeAbility);
+            }
+            $abilities = is_null($abilityCaughtLine) && is_null($abilitiesCaughtLine)
+                ? []
+                : array_merge(explode(',', $abilityCaughtLine), explode(',', $abilitiesCaughtLine));
+        }
+
+        // dd($routeAbilities, $abilities);
+
+        foreach ($abilities as $ability) {
+            if ($request->user()->tokenCan($ability)) {
+                return true;
+            }
+        }
+        return response(["error" => "User unauthorized"], 401);
+        // throw new MissingAbilityException($abilities);
     }
 }
