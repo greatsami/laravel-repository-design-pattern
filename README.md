@@ -32,3 +32,12 @@ php artisan serve
 Now, you are ready to use api and test it and learn from this project.
 
 The postman json file is included in the root directory called (Postman-api.json).
+
+## Update 2
+
+Now the application provided with Api Documentation, with these urls:
+
+- UI Documentation:
+    * http://127.0.0.1:8000/api/docs
+- JSON Documentation:
+    * http://127.0.0.1:8000/api/docs.json
