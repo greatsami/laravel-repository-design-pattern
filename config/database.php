@@ -93,6 +93,12 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'dbal' => [
+            'types' => [
+                'geometry' => '\Doctrine\DBAL\Types\StringType',
+            ],
+        ],
+
     ],
 
     /*

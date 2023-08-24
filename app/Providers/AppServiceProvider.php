@@ -4,7 +4,10 @@ namespace App\Providers;
 
 use App\Repositories\BlogPostRepository;
 use App\Repositories\BlogPostRepositoryInterface;
+use Dedoc\Scramble\Scramble;
+use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,6 +17,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(BlogPostRepositoryInterface::class, BlogPostRepository::class);
+
+        Scramble::routes(function (Route $route) {
+            return Str::startsWith($route->uri, 'api/');
+        });
     }
 
     /**

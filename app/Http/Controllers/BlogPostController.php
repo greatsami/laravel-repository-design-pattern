@@ -37,7 +37,10 @@ class BlogPostController extends Controller
         );
     }
 
-    public function update(BlogPostRequest $request, BlogPost $blogPost)
+    /**
+     * @response BlogPostResource // 1 - PhpDoc
+     */
+    public function update(BlogPostRequest $request, BlogPost $blogPost): BlogPostResource
     {
         return BlogPostResource::make(
             $this->repository->update(
