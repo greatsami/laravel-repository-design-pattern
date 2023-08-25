@@ -19,7 +19,7 @@ class RegisterDto
             name: $request->validated('name'),
             email: $request->validated('email'),
             password: $request->validated('password'),
-            permissions: $request->validated('permissions') ?? [],
+            permissions: $request->validated('permissions') ?? ['blog_post-list'],
         );
     }
 }

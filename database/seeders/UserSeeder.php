@@ -27,7 +27,9 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'name' => 'User',
             'email' => 'user@gmail.com',
-            'permissions' => [],
+            'permissions' => [
+                'blog_post-list'
+            ],
         ]);
     }
 }

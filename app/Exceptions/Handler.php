@@ -3,8 +3,11 @@
 namespace App\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -32,7 +35,11 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
+
         if (!$request->routeIs('auth.*')) {
+            if ($e instanceof ModelNotFoundException && $request->wantsJson()) {
+                return response()->json(['message' => 'Not Found!'], 404);
+            }
 
             if (!$request->user() || !$request->user()->currentAccessToken()) {
                 throw new AuthenticationException;
