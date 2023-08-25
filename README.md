@@ -68,3 +68,7 @@ Normal user:
 - password: 123123123
 
 he hasn't any permission, so he can't access any endpoint.
+
+## Update 4
+
+Authentication module Converted to DTO & Repository Design Pattern.

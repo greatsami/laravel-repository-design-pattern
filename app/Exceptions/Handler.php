@@ -32,35 +32,39 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
-        if (!$request->user() || !$request->user()->currentAccessToken()) {
-            throw new AuthenticationException;
-        }
+        if (!$request->routeIs('auth.*')) {
 
-        $routeAbilities = $request->route()->middleware();
-
-        $abilities = array();
-        $abilityCaughtLine = "";
-        $abilitiesCaughtLine = "";
-        foreach ($routeAbilities as $routeAbility) {
-            if (Str::contains($routeAbility, 'ability:')) {
-                $abilityCaughtLine .= str_replace('ability:', '', $routeAbility);
+            if (!$request->user() || !$request->user()->currentAccessToken()) {
+                throw new AuthenticationException;
             }
-            if (Str::contains($routeAbility, 'abilities:')) {
-                $abilitiesCaughtLine .= str_replace('abilities:', '', $routeAbility);
-            }
-            $abilities = is_null($abilityCaughtLine) && is_null($abilitiesCaughtLine)
-                ? []
-                : array_merge(explode(',', $abilityCaughtLine), explode(',', $abilitiesCaughtLine));
-        }
 
-        // dd($routeAbilities, $abilities);
+            $routeAbilities = $request->route()->middleware();
 
-        foreach ($abilities as $ability) {
-            if ($request->user()->tokenCan($ability)) {
-                return true;
+            $abilities = array();
+            $abilityCaughtLine = "";
+            $abilitiesCaughtLine = "";
+            foreach ($routeAbilities as $routeAbility) {
+                if (Str::contains($routeAbility, 'ability:')) {
+                    $abilityCaughtLine .= str_replace('ability:', '', $routeAbility);
+                }
+                if (Str::contains($routeAbility, 'abilities:')) {
+                    $abilitiesCaughtLine .= str_replace('abilities:', '', $routeAbility);
+                }
+                $abilities = is_null($abilityCaughtLine) && is_null($abilitiesCaughtLine)
+                    ? []
+                    : array_merge(explode(',', $abilityCaughtLine), explode(',', $abilitiesCaughtLine));
             }
+
+            // dd($routeAbilities, $abilities);
+
+            foreach ($abilities as $ability) {
+                if ($request->user()->tokenCan($ability)) {
+                    return true;
+                }
+            }
+            return response(["error" => "User unauthorized"], 401);
+            // throw new MissingAbilityException($abilities);
         }
-        return response(["error" => "User unauthorized"], 401);
-        // throw new MissingAbilityException($abilities);
+        return true;
     }
 }
